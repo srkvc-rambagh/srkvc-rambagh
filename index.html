@@ -196,4 +196,348 @@ window.searchStudent=()=>{
 </script>
 
 </body>
+</html><script>
+let students = JSON.parse(localStorage.getItem("students")) || [];
+
+/* navigation */
+function showSection(id){
+document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+}
+
+/* dark mode */
+function toggleMode(){
+document.body.classList.toggle("dark");
+}
+
+/* save to storage */
+function saveData(){
+localStorage.setItem("students", JSON.stringify(students));
+}
+
+/* load old data when page opens */
+window.onload = function(){
+document.getElementById("total").innerText = students.length;
+updateChart();
+};
+
+/* add student */
+function addStudent(){
+let s={
+name:name.value,
+father:father.value,
+dob:dob.value,
+class:document.getElementById('class').value
+};
+students.push(s);
+saveData(); // ✅ Save permanently
+document.getElementById("total").innerText=students.length;
+updateChart();
+alert("Student Registered & Saved");
+}
+
+/* search */
+function searchStudent(){
+let key=searchInput.value.toLowerCase();
+results.innerHTML="";
+students.filter(s=>s.name.toLowerCase().includes(key))
+.forEach(s=>{
+results.innerHTML+=`<div class="student">${s.name} - Class ${s.class}</div>`;
+});
+}
+
+/* chart */
+const ctx=document.getElementById('chart');
+let chart=new Chart(ctx,{
+type:'bar',
+data:{
+labels:["Students"],
+datasets:[{label:"Total",data:[students.length]}]
+}
+});
+
+function updateChart(){
+chart.data.datasets[0].data=[students.length];
+chart.update();
+}
+</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SRKVC Smart Dashboard</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+:root{
+ --primary:#2563eb;
+ --dark:#0f172a;
+ --light:#f1f5f9;
+ --card-bg:rgba(255,255,255,0.7);
+}
+
+body{
+margin:0;
+font-family:Poppins;
+background:linear-gradient(120deg,#e0e7ff,#f1f5f9);
+transition:.3s;
+}
+
+.dark{
+background:linear-gradient(120deg,#020617,#0f172a);
+color:white;
+}
+
+.container{
+display:flex;
+min-height:100vh;
+}
+
+/* SIDEBAR */
+.sidebar{
+width:240px;
+background:rgba(37,99,235,0.9);
+backdrop-filter:blur(10px);
+color:white;
+padding:20px;
+}
+
+.sidebar h2{margin-bottom:20px}
+
+.sidebar button{
+width:100%;
+padding:12px;
+margin:6px 0;
+border:none;
+background:rgba(255,255,255,0.2);
+color:white;
+cursor:pointer;
+border-radius:8px;
+transition:.3s;
+}
+
+.sidebar button:hover{
+background:white;
+color:var(--primary);
+}
+
+/* MAIN */
+.main{
+flex:1;
+padding:20px;
+}
+
+/* HEADER */
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+}
+
+/* CARDS */
+.cards{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:15px;
+margin-bottom:20px;
+}
+
+.card{
+background:var(--card-bg);
+backdrop-filter:blur(12px);
+padding:20px;
+border-radius:14px;
+box-shadow:0 8px 20px rgba(0,0,0,0.08);
+transition:.3s;
+}
+
+.card:hover{
+transform:translateY(-6px) scale(1.02);
+}
+
+/* SECTION */
+.section{
+display:none;
+background:var(--card-bg);
+backdrop-filter:blur(12px);
+padding:20px;
+border-radius:14px;
+}
+
+.section.active{display:block}
+
+/* FORM */
+input,select{
+width:100%;
+padding:10px;
+margin:8px 0;
+border-radius:8px;
+border:1px solid #ccc;
+}
+
+button.primary{
+background:var(--primary);
+color:white;
+border:none;
+padding:10px;
+border-radius:8px;
+cursor:pointer;
+width:100%;
+margin-top:10px;
+}
+
+/* STUDENT LIST */
+.student{
+background:#dbeafe;
+padding:10px;
+margin:6px 0;
+border-radius:8px;
+}
+
+/* TOGGLE */
+.toggle{
+cursor:pointer;
+background:var(--primary);
+color:white;
+border:none;
+padding:8px 14px;
+border-radius:8px;
+}
+
+/* MOBILE */
+@media(max-width:768px){
+.container{flex-direction:column}
+.sidebar{width:100%}
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<div class="sidebar">
+<h2>SRKVC</h2>
+<button onclick="showSection('dashboard')">Dashboard</button>
+<button onclick="showSection('register')">Register</button>
+<button onclick="showSection('search')">Search</button>
+</div>
+
+<div class="main">
+
+<div class="header">
+<h2>Smart Hostel Dashboard</h2>
+<button class="toggle" onclick="toggleMode()">🌙 Mode</button>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="section active">
+
+<div class="cards">
+<div class="card">
+<h3>Total Students</h3>
+<h2 id="total">0</h2>
+</div>
+
+<div class="card">
+<h3>Classes</h3>
+<h2>1 – 12</h2>
+</div>
+
+<div class="card">
+<h3>System Status</h3>
+<h2>Active</h2>
+</div>
+</div>
+
+<canvas id="chart"></canvas>
+
+</div>
+
+<!-- REGISTER -->
+<div id="register" class="section">
+<h3>Register Student</h3>
+<input id="name" placeholder="Student Name">
+<input id="father" placeholder="Father Name">
+<input type="date" id="dob">
+
+<select id="class">
+<option>Select Class</option>
+<option>1</option><option>2</option><option>3</option>
+<option>4</option><option>5</option><option>6</option>
+<option>7</option><option>8</option><option>9</option>
+<option>10</option><option>11</option><option>12</option>
+</select>
+
+<button class="primary" onclick="addStudent()">Register</button>
+</div>
+
+<!-- SEARCH -->
+<div id="search" class="section">
+<h3>Search Student</h3>
+<input id="searchInput" placeholder="Enter Name">
+<button class="primary" onclick="searchStudent()">Search</button>
+<div id="results"></div>
+</div>
+
+</div>
+</div>
+
+<script>
+let students=[];
+
+/* navigation */
+function showSection(id){
+document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+}
+
+/* dark mode */
+function toggleMode(){
+document.body.classList.toggle("dark");
+}
+
+/* add student */
+function addStudent(){
+let s={
+name:name.value,
+father:father.value,
+dob:dob.value,
+class:document.getElementById('class').value
+};
+students.push(s);
+document.getElementById("total").innerText=students.length;
+updateChart();
+alert("Student Registered");
+}
+
+/* search */
+function searchStudent(){
+let key=searchInput.value.toLowerCase();
+results.innerHTML="";
+students.filter(s=>s.name.toLowerCase().includes(key))
+.forEach(s=>{
+results.innerHTML+=`<div class="student">${s.name} - Class ${s.class}</div>`;
+});
+}
+
+/* chart */
+const ctx=document.getElementById('chart');
+let chart=new Chart(ctx,{
+type:'bar',
+data:{
+labels:["Students"],
+datasets:[{label:"Total",data:[0]}]
+}
+});
+
+function updateChart(){
+chart.data.datasets[0].data=[students.length];
+chart.update();
+}
+</script>
+</body>
 </html>
