@@ -3,269 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shree Radhakrishna Vanvasi Chatravas Rambagh</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-
-<style>
-body{margin:0;font-family:'Roboto',sans-serif;background:#f4f6f9;}
-header{background:#1e3a8a;color:white;padding:15px;text-align:center}
-nav{display:flex;justify-content:center;background:#2563eb}
-nav button{background:none;border:none;color:white;padding:15px;cursor:pointer}
-.section{display:none;max-width:500px;margin:20px auto;padding:20px;background:white;border-radius:10px}
-.section.active{display:block}
-input,select{width:100%;padding:10px;margin:8px 0}
-.submit-btn{padding:10px;background:#1e3a8a;color:white;border:none;border-radius:5px;cursor:pointer}
-.student{background:#eef2ff;padding:10px;margin:5px 0;border-radius:6px}
-.hidden{display:none}
-</style>
-</head>
-<body>
-
-<header>
-<h2>Shree Radhakrishna Vanvasi Chatravas Rambagh</h2>
-</header>
-
-<nav>
-<button onclick="showSection('register')">Register</button>
-<button onclick="showSection('search')">Search</button>
-<button onclick="showSection('admin')">Admin</button>
-</nav>
-
-<!-- REGISTER -->
-<div id="register" class="section active">
-<h3>Student Registration</h3>
-
-<input id="name" placeholder="Student Name">
-<input id="father" placeholder="Father Name">
-
-<label>Date of Birth</label>
-<input id="dob" type="date">
-
-<label>State</label>
-<select id="state">
-<option>Assam</option>
-<option>Arunachal Pradesh</option>
-<option>Meghalaya</option>
-<option>Manipur</option>
-<option>Nagaland</option>
-<option>Mizoram</option>
-<option>Tripura</option>
-<option>Sikkim</option>
-</select>
-
-<label>Tribe</label>
-<select id="tribe">
-<option>Bodo</option>
-<option>Mishing</option>
-<option>Karbi</option>
-<option>Dimasa</option>
-<option>Rabha</option>
-<option>Garo</option>
-<option>Khasi</option>
-<option>Naga</option>
-<option>Mizo</option>
-<option>Tripuri</option>
-</select>
-
-<label>Class</label>
-<select id="class">
-<option>1</option>
-<option>2</option>
-<option>3</option>
-<option>4</option>
-<option>5</option>
-<option>6</option>
-<option>7</option>
-<option>8</option>
-<option>9</option>
-<option>10</option>
-<option>11</option>
-<option>12</option>
-</select>
-
-<button class="submit-btn" onclick="registerStudent()">Register</button>
-</div>
-
-<!-- SEARCH -->
-<div id="search" class="section">
-<h3>Search Student</h3>
-<input id="searchName" placeholder="Enter Name">
-<button class="submit-btn" onclick="searchStudent()">Search</button>
-<div id="result"></div>
-</div>
-
-<!-- ADMIN -->
-<div id="admin" class="section">
-<h3>Admin Login</h3>
-<input id="email" placeholder="Email">
-<input id="password" type="password" placeholder="Password">
-<button class="submit-btn" onclick="login()">Login</button>
-
-<div id="dashboard" class="hidden">
-<h3>Dashboard</h3>
-<button class="submit-btn" onclick="logout()">Logout</button>
-<h4>Total Students: <span id="count">0</span></h4>
-
-<input id="adminName" placeholder="Name">
-<input id="adminFather" placeholder="Father Name">
-
-<label>Date of Birth</label>
-<input id="adminDob" type="date">
-
-<input id="adminState" placeholder="State">
-<input id="adminTribe" placeholder="Tribe">
-
-<label>Class</label>
-<select id="adminClass">
-<option>1</option>
-<option>2</option>
-<option>3</option>
-<option>4</option>
-<option>5</option>
-<option>6</option>
-<option>7</option>
-<option>8</option>
-<option>9</option>
-<option>10</option>
-<option>11</option>
-<option>12</option>
-</select>
-
-<button class="submit-btn" onclick="addStudentAdmin()">Add</button>
-
-<div id="studentList"></div>
-</div>
-</div>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-/* 🔥 REPLACE API KEY WITH FULL ONE FROM FIREBASE */
-const firebaseConfig = {
-  apiKey: "PASTE_FULL_API_KEY_HERE",
-  authDomain: "srkvc-rambagh.firebaseapp.com",
-  projectId: "srkvc-rambagh",
-  storageBucket: "srkvc-rambagh.appspot.com",
-  messagingSenderId: "468454638265",
-  appId: "1:468454638265:web:664bd9546a15fb959d168",
-  measurementId: "G-PHBH8TQSTG"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-window.showSection=id=>{
- document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
- document.getElementById(id).classList.add('active');
-};
-
-let students=JSON.parse(localStorage.getItem("students"))||[];
-function saveData(){localStorage.setItem("students",JSON.stringify(students));}
-function generateId(){return "SRKVC-"+Math.floor(1000+Math.random()*9000);}
-
-window.registerStudent=()=>{
- const s={
-  id:generateId(),
-  name:name.value,
-  father:father.value,
-  dob:dob.value,
-  state:state.value,
-  tribe:tribe.value,
-  class:document.getElementById("class").value
- };
- students.push(s); saveData();
- alert("Registered ID: "+s.id);
-};
-
-window.searchStudent=()=>{
- let key=searchName.value.toLowerCase();
- result.innerHTML="";
- let found=students.filter(s=>s.name.toLowerCase().includes(key));
- if(found.length){
-  found.forEach(s=>{
-   result.innerHTML+=`<div class="student">
-   ${s.name} | DOB: ${s.dob} | Class: ${s.class}
-   </div>`;
-  });
- }else result.innerHTML="Not Found";
-};
-</script>
-
-</body>
-</html><script>
-let students = JSON.parse(localStorage.getItem("students")) || [];
-
-/* navigation */
-function showSection(id){
-document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-document.getElementById(id).classList.add('active');
-}
-
-/* dark mode */
-function toggleMode(){
-document.body.classList.toggle("dark");
-}
-
-/* save to storage */
-function saveData(){
-localStorage.setItem("students", JSON.stringify(students));
-}
-
-/* load old data when page opens */
-window.onload = function(){
-document.getElementById("total").innerText = students.length;
-updateChart();
-};
-
-/* add student */
-function addStudent(){
-let s={
-name:name.value,
-father:father.value,
-dob:dob.value,
-class:document.getElementById('class').value
-};
-students.push(s);
-saveData(); // ✅ Save permanently
-document.getElementById("total").innerText=students.length;
-updateChart();
-alert("Student Registered & Saved");
-}
-
-/* search */
-function searchStudent(){
-let key=searchInput.value.toLowerCase();
-results.innerHTML="";
-students.filter(s=>s.name.toLowerCase().includes(key))
-.forEach(s=>{
-results.innerHTML+=`<div class="student">${s.name} - Class ${s.class}</div>`;
-});
-}
-
-/* chart */
-const ctx=document.getElementById('chart');
-let chart=new Chart(ctx,{
-type:'bar',
-data:{
-labels:["Students"],
-datasets:[{label:"Total",data:[students.length]}]
-}
-});
-
-function updateChart(){
-chart.data.datasets[0].data=[students.length];
-chart.update();
-}
-</script>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SRKVC Smart Dashboard</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
@@ -540,4 +277,292 @@ chart.update();
 }
 </script>
 </body>
-</html>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shree Radhakrishna Vanvasi Chatravas Rambagh</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+body{margin:0;font-family:'Roboto',sans-serif;background:#f4f6f9;}
+header{background:#1e3a8a;color:white;padding:15px;text-align:center}
+nav{display:flex;justify-content:center;background:#2563eb}
+nav button{background:none;border:none;color:white;padding:15px;cursor:pointer}
+.section{display:none;max-width:500px;margin:20px auto;padding:20px;background:white;border-radius:10px}
+.section.active{display:block}
+input,select{width:100%;padding:10px;margin:8px 0}
+.submit-btn{padding:10px;background:#1e3a8a;color:white;border:none;border-radius:5px;cursor:pointer}
+.student{background:#eef2ff;padding:10px;margin:5px 0;border-radius:6px}
+.hidden{display:none}
+</style>
+</head>
+<body>
+
+<header>
+<h2>Shree Radhakrishna Vanvasi Chatravas Rambagh</h2>
+</header>
+
+<nav>
+<button onclick="showSection('register')">Register</button>
+<button onclick="showSection('search')">Search</button>
+<button onclick="showSection('admin')">Admin</button>
+</nav>
+
+<!-- REGISTER -->
+<div id="register" class="section active">
+<h3>Student Registration</h3>
+
+<input id="name" placeholder="Student Name">
+<input id="father" placeholder="Father Name">
+
+<label>Date of Birth</label>
+<input id="dob" type="date">
+
+<label>State</label>
+<select id="state">
+<option>Assam</option>
+<option>Arunachal Pradesh</option>
+<option>Meghalaya</option>
+<option>Manipur</option>
+<option>Nagaland</option>
+<option>Mizoram</option>
+<option>Tripura</option>
+<option>Sikkim</option>
+<option>Uttar Pradesh</option>
+<option>Bihar</option>
+<option>Chattishgarh</option>
+<option>Nepal</option>
+</select>
+
+<label>Tribe</label>
+<select id="tribe">
+<option>Bodo</option>
+<option>Mishing</option>
+<option>Karbi</option>
+<option>Dimasa</option>
+<option>Rabha</option>
+<option>Garo</option>
+<option>Khasi</option>
+<option>Naga</option>
+<option>Mizo</option>
+<option>Tripuri</option>
+<option>Santhali</option>
+<option>Reang</option>
+<option>Halam</option>
+<option>Mising</option>
+<option>Galo</option>
+<option>Nyisi</option>
+<option>Mismi</option>
+<option>Adi</option>
+<option>Wangcho</option>
+<option>Apatani</option>
+<option>Chang</option>
+<option>Chakachang</option>
+<option>Chakachep</option>
+<option>Zeliang</option>
+<option>Zeme</option>
+<option>Rongmei</option>
+<option>Nepali</option>
+<option>Chakma</option>
+<option>Gond</option>
+<option>Kol</option>
+<option>Kharwar</option>
+<option>Sahu</option>
+</select>
+
+<label>Class</label>
+<select id="class">
+<option>1</option>
+<option>2</option>
+<option>3</option>
+<option>4</option>
+<option>5</option>
+<option>6</option>
+<option>7</option>
+<option>8</option>
+<option>9</option>
+<option>10</option>
+<option>11</option>
+<option>12</option>
+</select>
+
+<button class="submit-btn" onclick="registerStudent()">Register</button>
+</div>
+
+<!-- SEARCH -->
+<div id="search" class="section">
+<h3>Search Student</h3>
+<input id="searchName" placeholder="Enter Name">
+<button class="submit-btn" onclick="searchStudent()">Search</button>
+<div id="result"></div>
+</div>
+
+<!-- ADMIN -->
+<div id="admin" class="section">
+<h3>Admin Login</h3>
+<input id="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
+<button class="submit-btn" onclick="login()">Login</button>
+
+<div id="dashboard" class="hidden">
+<h3>Dashboard</h3>
+<button class="submit-btn" onclick="logout()">Logout</button>
+<h4>Total Students: <span id="count">0</span></h4>
+
+<input id="adminName" placeholder="Name">
+<input id="adminFather" placeholder="Father Name">
+
+<label>Date of Birth</label>
+<input id="adminDob" type="date">
+
+<input id="adminState" placeholder="State">
+<input id="adminTribe" placeholder="Tribe">
+
+<label>Class</label>
+<select id="adminClass">
+<option>1</option>
+<option>2</option>
+<option>3</option>
+<option>4</option>
+<option>5</option>
+<option>6</option>
+<option>7</option>
+<option>8</option>
+<option>9</option>
+<option>10</option>
+<option>11</option>
+<option>12</option>
+</select>
+
+<button class="submit-btn" onclick="addStudentAdmin()">Add</button>
+
+<div id="studentList"></div>
+</div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+/* 🔥 REPLACE API KEY WITH FULL ONE FROM FIREBASE */
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "srkvc-rambagh.firebaseapp.com",
+  projectId: "srkvc-rambagh",
+  storageBucket: "srkvc-rambagh.appspot.com",
+  messagingSenderId: "468454638265",
+  appId: "1:468454638265:web:664bd9546a15fb959d168",
+  measurementId: "G-PHBH8TQSTG"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+window.showSection=id=>{
+ document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
+};
+
+let students=JSON.parse(localStorage.getItem("students"))||[];
+function saveData(){localStorage.setItem("students",JSON.stringify(students));}
+function generateId(){return "SRKVC-"+Math.floor(1000+Math.random()*9000);}
+
+window.registerStudent=()=>{
+ const s={
+  id:generateId(),
+  name:name.value,
+  father:father.value,
+  dob:dob.value,
+  state:state.value,
+  tribe:tribe.value,
+  class:document.getElementById("class").value
+ };
+ students.push(s); saveData();
+ alert("Registered ID: "+s.id);
+};
+
+window.searchStudent=()=>{
+ let key=searchName.value.toLowerCase();
+ result.innerHTML="";
+ let found=students.filter(s=>s.name.toLowerCase().includes(key));
+ if(found.length){
+  found.forEach(s=>{
+   result.innerHTML+=`<div class="student">
+   ${s.name} | DOB: ${s.dob} | Class: ${s.class}
+   </div>`;
+  });
+ }else result.innerHTML="Not Found";
+};
+</script>
+
+</body>
+</html><script>
+let students = JSON.parse(localStorage.getItem("students")) || [];
+
+/* navigation */
+function showSection(id){
+document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+}
+
+/* dark mode */
+function toggleMode(){
+document.body.classList.toggle("dark");
+}
+
+/* save to storage */
+function saveData(){
+localStorage.setItem("students", JSON.stringify(students));
+}
+
+/* load old data when page opens */
+window.onload = function(){
+document.getElementById("total").innerText = students.length;
+updateChart();
+};
+
+/* add student */
+function addStudent(){
+let s={
+name:name.value,
+father:father.value,
+dob:dob.value,
+class:document.getElementById('class').value
+};
+students.push(s);
+saveData(); // ✅ Save permanently
+document.getElementById("total").innerText=students.length;
+updateChart();
+alert("Student Registered & Saved");
+}
+
+/* search */
+function searchStudent(){
+let key=searchInput.value.toLowerCase();
+results.innerHTML="";
+students.filter(s=>s.name.toLowerCase().includes(key))
+.forEach(s=>{
+results.innerHTML+=`<div class="student">${s.name} - Class ${s.class}</div>`;
+});
+}
+
+/* chart */
+const ctx=document.getElementById('chart');
+let chart=new Chart(ctx,{
+type:'bar',
+data:{
+labels:["Students"],
+datasets:[{label:"Total",data:[students.length]}]
+}
+});
+
+function updateChart(){
+chart.data.datasets[0].data=[students.length];
+chart.update();
+}
+</script>
