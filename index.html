@@ -5,166 +5,194 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Shree Radhakrishna Vanvasi Chatravas Rambagh</title>
 
-<!-- GOOGLE FONT -->
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 
 <style>
-  body {margin:0;font-family:'Roboto',sans-serif;background:#f4f6f9;}
-  header{background:#1e3a8a;color:white;padding:15px;text-align:center;display:flex;flex-direction:column;align-items:center;}
-  header img{width:100px;height:100px;border-radius:50%;margin-bottom:10px;}
-  header h1{margin:0;font-size:24px;}
-
-  nav{display:flex;justify-content:center;background:#2563eb;}
-  nav button{background:none;border:none;color:white;padding:15px 20px;cursor:pointer;font-size:16px;transition:0.3s;}
-  nav button.active, nav button:hover{background:#1e40af;border-radius:5px;}
-
-  .section{display:none;max-width:500px;margin:20px auto;padding:20px;background:white;border-radius:10px;box-shadow:0 0 10px gray;}
-  .section.active{display:block;}
-
-  input, select{width:95%;padding:10px;margin:8px 0;border:1px solid #ccc;border-radius:5px;}
-  button.submit-btn{padding:10px 20px;background:#1e3a8a;color:white;border:none;border-radius:5px;cursor:pointer;transition:0.3s;}
-  button.submit-btn:hover{background:#2563eb;}
-
-  .student-card, .student{background:#eef2ff;padding:12px;margin:10px 0;border-radius:8px;display:flex;justify-content:space-between;align-items:center;}
-  .student-card p{margin:0;font-size:14px;}
-  .student-card button{padding:5px 10px;background:red;border:none;color:white;border-radius:5px;cursor:pointer;font-size:12px;}
-
-  @media(max-width:600px){nav{flex-direction:column;}nav button{margin:2px 0;}}
+body{margin:0;font-family:'Roboto',sans-serif;background:#f4f6f9;}
+header{background:#1e3a8a;color:white;padding:15px;text-align:center}
+nav{display:flex;justify-content:center;background:#2563eb}
+nav button{background:none;border:none;color:white;padding:15px;cursor:pointer}
+.section{display:none;max-width:500px;margin:20px auto;padding:20px;background:white;border-radius:10px}
+.section.active{display:block}
+input,select{width:100%;padding:10px;margin:8px 0}
+.submit-btn{padding:10px;background:#1e3a8a;color:white;border:none;border-radius:5px;cursor:pointer}
+.student{background:#eef2ff;padding:10px;margin:5px 0;border-radius:6px}
+.hidden{display:none}
 </style>
 </head>
 <body>
 
 <header>
-  <img src="https://images.unsplash.com/photo-1579163606912-5d23c1f6f87b?crop=entropy&cs=tinysrgb&fit=crop&h=100&w=100" alt="Hostel Logo">
-  <h1>Shree Radhakrishna Vanvasi Chatravas Rambagh</h1>
+<h2>Shree Radhakrishna Vanvasi Chatravas Rambagh</h2>
 </header>
 
 <nav>
-  <button class="active" onclick="showSection('register')">Student Registration</button>
-  <button onclick="showSection('search')">Search Students</button>
-  <button onclick="showSection('adminLogin')">Admin Panel</button>
+<button onclick="showSection('register')">Register</button>
+<button onclick="showSection('search')">Search</button>
+<button onclick="showSection('admin')">Admin</button>
 </nav>
 
-<!-- STUDENT REGISTRATION -->
+<!-- REGISTER -->
 <div id="register" class="section active">
-  <h2>Register Student</h2>
-  <input type="text" id="name" placeholder="Student Name">
-  <input type="text" id="father" placeholder="Father Name">
-  <input type="date" id="dob">
-  <select id="state">
-    <option>Assam</option><option>Arunachal Pradesh</option><option>Meghalaya</option>
-    <option>Manipur</option><option>Nagaland</option><option>Mizoram</option>
-    <option>Tripura</option><option>Sikkim</option>
-  </select>
-  <select id="tribe">
-    <option>Bodo</option><option>Mishing</option><option>Karbi</option><option>Dimasa</option>
-    <option>Rabha</option><option>Garo</option><option>Khasi</option><option>Naga</option>
-    <option>Mizo</option><option>Tripuri</option><option>Reang</option><option>Chakachep</option>
-    <option>Nyishi</option><option>Galo</option><option>Adi</option><option>Apatani</option>
-    <option>Mishmi</option><option>Deori</option><option>Chang</option><option>Wangcho</option>
-    <option>Nepali</option><option>Sahu</option><option>Hajong</option><option>Sangma</option>
-    <option>Chakma</option><option>Ao</option><option>Zeliang</option><option>Rongmei</option>
-    <option>Zeme</option><option>Sema</option><option>Angami</option><option>Tangkhul</option>
-    <option>Kuki</option>
-  </select>
-  <select id="class">
-    <option>1</option><option>2</option><option>3</option><option>4</option>
-    <option>5</option><option>6</option><option>7</option><option>8</option>
-    <option>9</option><option>10</option><option>11</option><option>12</option>
-  </select>
-  <button class="submit-btn" onclick="registerStudent()">Register</button>
+<h3>Student Registration</h3>
+
+<input id="name" placeholder="Student Name">
+<input id="father" placeholder="Father Name">
+
+<label>Date of Birth</label>
+<input id="dob" type="date">
+
+<label>State</label>
+<select id="state">
+<option>Assam</option>
+<option>Arunachal Pradesh</option>
+<option>Meghalaya</option>
+<option>Manipur</option>
+<option>Nagaland</option>
+<option>Mizoram</option>
+<option>Tripura</option>
+<option>Sikkim</option>
+</select>
+
+<label>Tribe</label>
+<select id="tribe">
+<option>Bodo</option>
+<option>Mishing</option>
+<option>Karbi</option>
+<option>Dimasa</option>
+<option>Rabha</option>
+<option>Garo</option>
+<option>Khasi</option>
+<option>Naga</option>
+<option>Mizo</option>
+<option>Tripuri</option>
+</select>
+
+<label>Class</label>
+<select id="class">
+<option>1</option>
+<option>2</option>
+<option>3</option>
+<option>4</option>
+<option>5</option>
+<option>6</option>
+<option>7</option>
+<option>8</option>
+<option>9</option>
+<option>10</option>
+<option>11</option>
+<option>12</option>
+</select>
+
+<button class="submit-btn" onclick="registerStudent()">Register</button>
 </div>
 
-<!-- STUDENT SEARCH -->
+<!-- SEARCH -->
 <div id="search" class="section">
-  <h2>Search Students</h2>
-  <input type="text" id="searchName" placeholder="Enter Student Name">
-  <button class="submit-btn" onclick="searchStudent()">Search</button>
-  <div id="result"></div>
+<h3>Search Student</h3>
+<input id="searchName" placeholder="Enter Name">
+<button class="submit-btn" onclick="searchStudent()">Search</button>
+<div id="result"></div>
 </div>
 
-<!-- ADMIN LOGIN -->
-<div id="adminLogin" class="section">
-  <h2>Admin Login</h2>
-  <input type="email" id="email" placeholder="Email">
-  <input type="password" id="password" placeholder="Password">
-  <button class="submit-btn" onclick="login()">Login</button>
+<!-- ADMIN -->
+<div id="admin" class="section">
+<h3>Admin Login</h3>
+<input id="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
+<button class="submit-btn" onclick="login()">Login</button>
 
-  <!-- DASHBOARD -->
-  <div id="dashboard" class="hidden">
-    <h2>Admin Dashboard</h2>
-    <button class="submit-btn" onclick="logout()">Logout</button>
-    <h3>Total Students: <span id="count">0</span></h3>
+<div id="dashboard" class="hidden">
+<h3>Dashboard</h3>
+<button class="submit-btn" onclick="logout()">Logout</button>
+<h4>Total Students: <span id="count">0</span></h4>
 
-    <input type="text" id="adminName" placeholder="Student Name">
-    <input type="text" id="adminFather" placeholder="Father Name">
-    <input type="date" id="adminDob">
-    <input type="text" id="adminState" placeholder="State">
-    <input type="text" id="adminTribe" placeholder="Tribe">
-    <input type="text" id="adminClass" placeholder="Class">
-    <button class="submit-btn" onclick="addStudentAdmin()">Add Student</button>
-    <div id="studentList"></div>
-  </div>
+<input id="adminName" placeholder="Name">
+<input id="adminFather" placeholder="Father Name">
+
+<label>Date of Birth</label>
+<input id="adminDob" type="date">
+
+<input id="adminState" placeholder="State">
+<input id="adminTribe" placeholder="Tribe">
+
+<label>Class</label>
+<select id="adminClass">
+<option>1</option>
+<option>2</option>
+<option>3</option>
+<option>4</option>
+<option>5</option>
+<option>6</option>
+<option>7</option>
+<option>8</option>
+<option>9</option>
+<option>10</option>
+<option>11</option>
+<option>12</option>
+</select>
+
+<button class="submit-btn" onclick="addStudentAdmin()">Add</button>
+
+<div id="studentList"></div>
+</div>
 </div>
 
 <script type="module">
-/* ===== FIREBASE SETUP ===== */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+/* 🔥 REPLACE API KEY WITH FULL ONE FROM FIREBASE */
 const firebaseConfig = {
-  apiKey:"YOUR_API_KEY",
-  authDomain:"YOUR_AUTH_DOMAIN",
-  projectId:"YOUR_PROJECT_ID",
-  storageBucket:"YOUR_BUCKET",
-  messagingSenderId:"YOUR_ID",
-  appId:"YOUR_APP_ID"
+  apiKey: "PASTE_FULL_API_KEY_HERE",
+  authDomain: "srkvc-rambagh.firebaseapp.com",
+  projectId: "srkvc-rambagh",
+  storageBucket: "srkvc-rambagh.appspot.com",
+  messagingSenderId: "468454638265",
+  appId: "1:468454638265:web:664bd9546a15fb959d168",
+  measurementId: "G-PHBH8TQSTG"
 };
-const app=initializeApp(firebaseConfig);
-const auth=getAuth(app);
-const db=getFirestore(app);
 
-/* ===== SPA NAVIGATION ===== */
-function showSection(id){
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-/* ===== LOCAL STORAGE ===== */
+window.showSection=id=>{
+ document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
+};
+
 let students=JSON.parse(localStorage.getItem("students"))||[];
 function saveData(){localStorage.setItem("students",JSON.stringify(students));}
-function generateUniqueId(){return "SRKVCR-"+Math.floor(1000+Math.random()*9000);}
-function registerStudent(){
-  let s={uniqueId:generateUniqueId(),name:name.value,father:father.value,dob:dob.value,state:state.value,tribe:tribe.value,class:class.value};
-  students.push(s); saveData(); alert("Registered! ID:"+s.uniqueId);
-}
-function searchStudent(){
-  let nameVal=searchName.value.toLowerCase(),resultDiv=document.getElementById("result"); resultDiv.innerHTML="";
-  let found=students.filter(s=>s.name.toLowerCase().includes(nameVal));
-  if(found.length>0){ found.forEach(s=>{resultDiv.innerHTML+=`<div class="student-card"><p><b>Name:</b>${s.name}</p><p><b>ID:</b>${s.uniqueId}</p><p><b>State:</b>${s.state}</p><p><b>Tribe:</b>${s.tribe}</p><p><b>Class:</b>${s.class}</p></div>`}); }
-  else{resultDiv.innerHTML="Student Not Found";}
-}
+function generateId(){return "SRKVC-"+Math.floor(1000+Math.random()*9000);}
 
-/* ===== ADMIN LOGIN/DASHBOARD ===== */
-window.login=function(){
-  const email=document.getElementById("email").value,password=document.getElementById("password").value;
-  signInWithEmailAndPassword(auth,email,password)
-    .then(()=>{document.getElementById("dashboard").classList.remove("hidden"); loadStudentsAdmin();})
-    .catch(()=>alert("Login Failed"));
-}
-window.logout=function(){ signOut(auth).then(()=>{document.getElementById("dashboard").classList.add("hidden");});}
+window.registerStudent=()=>{
+ const s={
+  id:generateId(),
+  name:name.value,
+  father:father.value,
+  dob:dob.value,
+  state:state.value,
+  tribe:tribe.value,
+  class:document.getElementById("class").value
+ };
+ students.push(s); saveData();
+ alert("Registered ID: "+s.id);
+};
 
-/* ===== FIRESTORE ADMIN FUNCTIONS ===== */
-window.addStudentAdmin=async function(){
-  const s={name:adminName.value,father:adminFather.value,dob:adminDob.value,state:adminState.value,tribe:adminTribe.value,class:adminClass.value};
-  await addDoc(collection(db,"students"),s); alert("Added to Firebase!"); loadStudentsAdmin();
-}
-async function loadStudentsAdmin(){
-  const snapshot=await getDocs(collection(db,"students")); studentList.innerHTML=""; count.innerText=snapshot.size;
-  snapshot.forEach(docSnap=>{const s=docSnap.data(); studentList.innerHTML+=`<div class="student"><b>${s.name}</b> - ${s.class}<button onclick="deleteStudentAdmin('${docSnap.id}')">Delete</button></div>`;});
-}
-window.deleteStudentAdmin=async function(id){await deleteDoc(doc(db,"students",id)); loadStudentsAdmin();}
+window.searchStudent=()=>{
+ let key=searchName.value.toLowerCase();
+ result.innerHTML="";
+ let found=students.filter(s=>s.name.toLowerCase().includes(key));
+ if(found.length){
+  found.forEach(s=>{
+   result.innerHTML+=`<div class="student">
+   ${s.name} | DOB: ${s.dob} | Class: ${s.class}
+   </div>`;
+  });
+ }else result.innerHTML="Not Found";
+};
 </script>
 
 </body>
