@@ -1,176 +1,118 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Shree Radhakrishna Vanvasi Chatravas Rambagh</title>
+  <title>Hostel Admin Panel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f6f9;
-      text-align: center;
-    }
-
-    h1 {
-      color: darkblue;
-    }
-
-    .box {
-      background: white;
-      padding: 20px;
-      margin: 20px auto;
-      width: 320px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px gray;
-    }
-
-    input, select {
-      width: 95%;
-      padding: 8px;
-      margin: 6px 0;
-    }
-
-    button {
-      padding: 8px 15px;
-      background: darkblue;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    .student-card {
-      background: #eef2ff;
-      margin: 10px;
-      padding: 10px;
-      border-radius: 8px;
-    }
+    body {margin:0;font-family:Arial;background:#f1f5f9}
+    .login-box, .dashboard {max-width:400px;margin:80px auto;padding:20px;background:white;border-radius:10px;box-shadow:0 0 10px gray}
+    input {width:95%;padding:8px;margin:8px 0}
+    button {padding:8px 15px;background:#1e3a8a;color:white;border:none;cursor:pointer;border-radius:5px}
+    .hidden {display:none}
+    .student {background:#e0f2fe;padding:8px;margin:8px 0;border-radius:6px}
   </style>
 </head>
+
 <body>
 
-<h1>🏨 Shree Radhakrishna Vanvasi Chatravas Rambagh</h1>
-
-<div class="box">
-  <h3>Register Student</h3>
-  <input type="text" id="name" placeholder="Student Name" required>
-  <input type="text" id="father" placeholder="Father Name" required>
-  <input type="date" id="dob" required>
-
-  <select id="state">
-    <option>Assam</option>
-    <option>Arunachal Pradesh</option>
-    <option>Meghalaya</option>
-    <option>Manipur</option>
-    <option>Nagaland</option>
-    <option>Mizoram</option>
-    <option>Tripura</option>
-    <option>Sikkim</option>
-  </select>
-
-  <select id="tribe">
-    <option>Bodo</option>
-    <option>Mishing</option>
-    <option>Karbi</option>
-    <option>Dimasa</option>
-    <option>Rabha</option>
-    <option>Garo</option>
-    <option>Khasi</option>
-    <option>Naga</option>
-    <option>Mizo</option>
-    <option>Tripuri</option>
-
-    <!-- Newly Added Tribes -->
-    <option>Reang</option>
-    <option>Chakachep</option>
-    <option>Nyishi</option>
-    <option>Galo</option>
-    <option>Adi</option>
-    <option>Apatani</option>
-    <option>Mishmi</option>
-    <option>Deori</option>
-    <option>Chang</option>
-    <option>Wangcho</option>
-    <option>Nepali</option>
-    <option>Sahu</option>
-    <option>Hajong</option>
-    <option>Sangma</option>
-    <option>Chakma</option>
-    <option>Ao</option>
-    <option>Zeliang</option>
-    <option>Rongmei</option>
-    <option>Zeme</option>
-    <option>Sema</option>
-    <option>Angami</option>
-    <option>Tangkhul</option>
-    <option>Kuki</option>
-  </select>
-
-  <select id="class">
-    <option>1</option><option>2</option><option>3</option>
-    <option>4</option><option>5</option><option>6</option>
-    <option>7</option><option>8</option><option>9</option>
-    <option>10</option><option>11</option><option>12</option>
-  </select>
-
-  <button onclick="registerStudent()">Register</button>
+<div id="loginPage" class="login-box">
+  <h2>Admin Login</h2>
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Password">
+  <button onclick="login()">Login</button>
 </div>
 
-<div class="box">
-  <h3>Search Student</h3>
-  <input type="text" id="searchName" placeholder="Enter Student Name">
-  <button onclick="searchStudent()">Search</button>
-  <div id="result"></div>
+<div id="dashboardPage" class="dashboard hidden">
+  <h2>🏨 Hostel Admin Panel</h2>
+  <button onclick="logout()">Logout</button>
+
+  <h3>Total Students: <span id="count">0</span></h3>
+
+  <input type="text" id="name" placeholder="Student Name">
+  <input type="text" id="father" placeholder="Father Name">
+  <input type="date" id="dob">
+  <input type="text" id="state" placeholder="State">
+  <input type="text" id="tribe" placeholder="Tribe">
+  <input type="text" id="class" placeholder="Class">
+
+  <button onclick="addStudent()">Add Student</button>
+
+  <div id="studentList"></div>
 </div>
 
-<script>
-let students = JSON.parse(localStorage.getItem("students")) || [];
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-function saveData() {
-  localStorage.setItem("students", JSON.stringify(students));
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_BUCKET",
+  messagingSenderId: "YOUR_ID",
+  appId: "YOUR_APP_ID"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+window.login = function() {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  signInWithEmailAndPassword(auth, email, password)
+  .then(() => {
+    document.getElementById("loginPage").classList.add("hidden");
+    document.getElementById("dashboardPage").classList.remove("hidden");
+    loadStudents();
+  })
+  .catch(() => alert("Login Failed"));
 }
 
-function generateUniqueId() {
-  return "SRKVCR-" + Math.floor(1000 + Math.random() * 9000);
+window.logout = function() {
+  signOut(auth).then(() => {
+    document.getElementById("dashboardPage").classList.add("hidden");
+    document.getElementById("loginPage").classList.remove("hidden");
+  });
 }
 
-function registerStudent() {
-  let student = {
-    uniqueId: generateUniqueId(),
-    name: document.getElementById("name").value,
-    father: document.getElementById("father").value,
-    dob: document.getElementById("dob").value,
-    state: document.getElementById("state").value,
-    tribe: document.getElementById("tribe").value,
-    class: document.getElementById("class").value
+window.addStudent = async function() {
+  const student = {
+    name: name.value,
+    father: father.value,
+    dob: dob.value,
+    state: state.value,
+    tribe: tribe.value,
+    class: class.value
   };
 
-  students.push(student);
-  saveData();
-  alert("Student Registered! Unique ID: " + student.uniqueId);
+  await addDoc(collection(db, "students"), student);
+  alert("Student Added");
+  loadStudents();
 }
 
-function searchStudent() {
-  let name = document.getElementById("searchName").value.toLowerCase();
-  let resultDiv = document.getElementById("result");
-  resultDiv.innerHTML = "";
+async function loadStudents() {
+  const snapshot = await getDocs(collection(db, "students"));
+  studentList.innerHTML = "";
+  count.innerText = snapshot.size;
 
-  let found = students.filter(s => s.name.toLowerCase().includes(name));
+  snapshot.forEach(docSnap => {
+    const s = docSnap.data();
+    studentList.innerHTML += `
+      <div class="student">
+        <b>${s.name}</b> - ${s.class}
+        <button onclick="deleteStudent('${docSnap.id}')">Delete</button>
+      </div>
+    `;
+  });
+}
 
-  if(found.length > 0) {
-    found.forEach(s => {
-      resultDiv.innerHTML += `
-        <div class="student-card">
-          <p><b>Name:</b> ${s.name}</p>
-          <p><b>Unique ID:</b> ${s.uniqueId}</p>
-          <p><b>State:</b> ${s.state}</p>
-          <p><b>Tribe:</b> ${s.tribe}</p>
-          <p><b>Class:</b> ${s.class}</p>
-        </div>
-      `;
-    });
-  } else {
-    resultDiv.innerHTML = "Student Not Found";
-  }
+window.deleteStudent = async function(id) {
+  await deleteDoc(doc(db, "students", id));
+  loadStudents();
 }
 </script>
 
